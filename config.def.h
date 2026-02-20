@@ -5,12 +5,12 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "JetBrains Mono:pixelsize=18:antialias=true:autohint=true";
+static char *font = "JetBrains Mono:pixelsize=19:antialias=true:autohint=true";
 /* Spare fonts */
 static char *font2[] = {
 /*	"Inconsolata for Powerline:pixelsize=12:antialias=true:autohint=true", */
 /*	"Hack Nerd Font Mono:pixelsize=11:antialias=true:autohint=true", */
-	"Symbols Nerd font:pixelsize=18:antialias=true:autohint=true",
+	"Symbols Nerd font:pixelsize=19:antialias=true:autohint=true",
 };
 
 static int borderpx = 2;
@@ -206,12 +206,12 @@ static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
 	{ ShiftMask,            Button4, kscrollup,      {.i = mousescrollincrement} },
 	{ ShiftMask,            Button5, kscrolldown,    {.i = mousescrollincrement} },
-	{ XK_ANY_MOD,           Button4, kscrollup,      {.i = mousescrollincrement},		0, /* !alt */ -1 },
-	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = mousescrollincrement},		0, /* !alt */ -1 },
+	{ XK_ANY_MOD,           Button4, kscrollup,      {.i = mousescrollincrement },		0, /* !alt */ -1 },
+	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = mousescrollincrement },		0, /* !alt */ -1 },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
-	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
+	// { ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	// { XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
-	{ ShiftMask,            Button5, ttysend,        {.s = "\033[6;2~"} },
+	// { ShiftMask,            Button5, ttysend,        {.s = "\033[6;2~"} },
 	// { XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
 };
 
@@ -233,8 +233,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
-	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
-    { ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
+	{ ShiftMask,            XK_Prior,     	kscrollup,      {.i = mousescrollincrement} },
+    { ShiftMask,            XK_Next,   		kscrolldown,    {.i = mousescrollincrement} },
 };
 
 /*
