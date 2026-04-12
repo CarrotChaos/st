@@ -1054,14 +1054,17 @@ void tnew(int col, int row) {
   treset();
 }
 
-int tisaltscr(void) { return IS_SET(MODE_ALTSCREEN); }
-
 /* handle it with care */
 void tswapscreen(void) {
   static Line *altline;
   static int altcol, altrow;
   Line *tmpline = term.line;
   int tmpcol = term.col, tmprow = term.row;
+int tisaltscr(void)
+{
+	return IS_SET(MODE_ALTSCREEN);
+}
+
 
   term.line = altline;
   term.col = altcol, term.row = altrow;
@@ -2880,7 +2883,7 @@ void draw(void) {
 
   drawregion(0, 0, term.col, term.row);
   xdrawcursor(cx, term.c.y, term.line[term.c.y][cx], term.ocx, term.ocy,
-              term.line[term.ocy][term.ocx], term.line[term.ocy], term.col);
+              term.line[term.ocy][term.ocx]);
   term.ocx = cx;
   term.ocy = term.c.y;
   xfinishdraw();
