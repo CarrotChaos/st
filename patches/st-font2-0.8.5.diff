@@ -1,6 +1,44 @@
---- x.c
-+++ x.c
-@@ -308,6 +310,7 @@ zoomabs(const Arg *arg)
+From 1635e04d3643dd4caa0c7c2043b585c6d7e4705f Mon Sep 17 00:00:00 2001
+From: Rizqi Nur Assyaufi <bandithijo@gmail.com>
+Date: Mon, 18 Jul 2022 01:15:45 +0800
+Subject: [PATCH] [st][patch][font2] Add patch for st-0.8.5
+
+---
+ config.def.h |   6 +++
+ x.c          | 101 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 91ab8ca..717b2f0 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -6,6 +6,12 @@
+  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
+  */
+ static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
++/* Spare fonts */
++static char *font2[] = {
++/*	"Inconsolata for Powerline:pixelsize=12:antialias=true:autohint=true", */
++/*	"Hack Nerd Font Mono:pixelsize=11:antialias=true:autohint=true", */
++};
++
+ static int borderpx = 2;
+
+ /*
+diff --git a/x.c b/x.c
+index 8a16faa..220fc4f 100644
+--- a/x.c
++++ b/x.c
+@@ -157,6 +157,8 @@ static void xhints(void);
+ static int xloadcolor(int, const char *, Color *);
+ static int xloadfont(Font *, FcPattern *);
+ static void xloadfonts(const char *, double);
++static int xloadsparefont(FcPattern *, int);
++static void xloadsparefonts(void);
+ static void xunloadfont(Font *);
+ static void xunloadfonts(void);
+ static void xsetenv(void);
+@@ -306,6 +308,7 @@ zoomabs(const Arg *arg)
  {
  	xunloadfonts();
  	xloadfonts(usedfont, arg->f);
@@ -8,10 +46,10 @@
  	cresize(0, 0);
  	redraw();
  	xhints();
-@@ -1036,6 +1039,101 @@ xloadfonts(const char *fontstr, double fontsize)
+@@ -1034,6 +1037,101 @@ xloadfonts(const char *fontstr, double fontsize)
  	FcPatternDestroy(pattern);
  }
- 
+
 +int
 +xloadsparefont(FcPattern *pattern, int flags)
 +{
@@ -110,13 +148,16 @@
  void
  xunloadfont(Font *f)
  {
-@@ -1133,6 +1231,9 @@ xinit(int cols, int rows)
+@@ -1131,6 +1229,9 @@ xinit(int cols, int rows)
  	usedfont = (opt_font == NULL)? font : opt_font;
  	xloadfonts(usedfont, 0);
- 
+
 +	/* spare fonts */
 +	xloadsparefonts();
 +
  	/* colors */
  	xw.cmap = XDefaultColormap(xw.dpy, xw.scr);
  	xloadcols();
+--
+2.37.1
+
