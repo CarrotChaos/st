@@ -1482,20 +1482,11 @@ void xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len,
   }
 
   if (dmode & DRAW_FG) {
-    /* Restore clip because Xft is sometimes dirty.
-     * Make it wider than the cell so:
-     *   - Neovim logo box-drawing (╲ etc.) in JetBrains Mono renders fully
-     *   - Wide glyphs and ligatures are never cut off
-     *   - Old overhang bits are still erased by the BG pass on partial updates
-     */
-    XRectangle r;
+    /* Set the clip region because Xft is sometimes dirty. */
     r.x = 0;
     r.y = 0;
     r.height = win.ch;
-    if (base.mode & ATTR_WIDE)
-      r.width = width * 2; /* full wide-glyph support */
-    else
-      r.width = width + 6; /* 6 px overhang allowance for JetBrains Mono logo */
+    r.width = width;
     XftDrawSetClipRectangles(xw.draw, winx, winy, &r, 1);
 
     /* Render the glyphs. */
@@ -1510,7 +1501,7 @@ void xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len,
       XftDrawRect(xw.draw, fg, winx, winy + 2 * dc.font.ascent / 3, width, 1);
     }
 
-    /* Reset clip */
+    /* Reset clip to none. */
     XftDrawSetClip(xw.draw, 0);
   }
 }
