@@ -3,6 +3,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xft/Xft.h>
 #include <X11/Xlib.h>
+#include <X11/Xresource.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
 #include <errno.h>
@@ -45,6 +46,15 @@ typedef struct {
   signed char appkey;    /* application keypad */
   signed char appcursor; /* application cursor */
 } Key;
+
+/* Xresources preferences */
+enum XResType { STRING, INTEGER, FLOAT };
+
+typedef struct {
+  const char *name;
+  enum XResType type;
+  void *dst;
+} XResPref;
 
 /* X modifiers */
 #define XK_ANY_MOD UINT_MAX
@@ -196,6 +206,9 @@ static int match(uint, uint);
 static void run(void);
 static void usage(void);
 
+static void xresload(const XResPref *);
+static void xresupdate(void);
+
 static void (*handler[LASTEvent])(XEvent *) = {
     [KeyPress] = kpress,
     [ClientMessage] = cmessage,
@@ -227,6 +240,7 @@ static DC dc;
 static XWindow xw;
 static XSelection xsel;
 static TermWindow win;
+static XrmDatabase xrdb;
 
 /* Font Ring Cache */
 enum { FRC_NORMAL, FRC_ITALIC, FRC_BOLD, FRC_ITALICBOLD };
@@ -1971,6 +1985,58 @@ void run(void) {
   }
 }
 
+void xresload(const XResPref *resource) {
+  char *type;
+  XrmValue ret;
+
+  if (!XrmGetResource(xrdb, resource->name, NULL, &type, &ret))
+    return;
+  if (ret.addr == NULL || strncmp(type, "String", sizeof("String")))
+    return;
+
+  switch (resource->type) {
+  case STRING:
+    *(char **)resource->dst = ret.addr;
+    break;
+  case INTEGER:
+    *(int *)resource->dst = strtoul(ret.addr, NULL, 10);
+    break;
+  case FLOAT:
+    *(float *)resource->dst = strtof(ret.addr, NULL);
+    break;
+  }
+}
+
+void xresupdate(void) {
+  Display *display;
+  char *resm;
+  const XResPref *p;
+
+  display = XOpenDisplay(NULL);
+  if (!display)
+    return;
+
+  resm = XResourceManagerString(display);
+  if (resm) {
+    if (xrdb)
+      XrmDestroyDatabase(xrdb);
+    xrdb = XrmGetStringDatabase(resm);
+    if (xrdb) {
+      for (p = resources; p < resources + LEN(resources); ++p)
+        xresload(p);
+    }
+  }
+  XCloseDisplay(display);
+}
+
+void xresreload(int signum) {
+  xresupdate();
+  xloadcols();
+  cresize(0, 0);
+  redraw();
+  xhints();
+}
+
 void usage(void) {
   die("usage: %s [-aiv] [-c class] [-f font] [-g geometry]"
       " [-n name] [-o file]\n"
@@ -2045,6 +2111,9 @@ run:
 
   setlocale(LC_CTYPE, "");
   XSetLocaleModifiers("");
+  XrmInitialize();
+  xresupdate();
+  signal(SIGUSR1, xresreload);
   cols = MAX(cols, 1);
   rows = MAX(rows, 1);
   tnew(cols, rows);
