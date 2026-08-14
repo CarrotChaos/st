@@ -107,52 +107,43 @@ float alpha = 0.85;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    // Catppuccin colors
-    // 8 normal colors
-    "#45475A",
-    "#F38BA8",
-    "#A6E3A1",
-    "#F9E2AF",
-    "#89B4FA",
-    "#F5C2E7",
-    "#94E2D5",
-    "#BAC2DE",
+    /* 8 normal colors */
+    "black",
+    "red3",
+    "green3",
+    "yellow3",
+    "blue2",
+    "magenta3",
+    "cyan3",
+    "gray90",
 
-    // 8 bright colors
-    "#585B70",
-    "#F38BA8",
-    "#A6E3A1",
-    "#F9E2AF",
-    "#89B4FA",
-    "#F5C2E7",
-    "#94E2D5",
-    "#A6ADC8",
+    /* 8 bright colors */
+    "gray50",
+    "red",
+    "green",
+    "yellow",
+    "#5c5cff",
+    "magenta",
+    "cyan",
+    "white",
 
-    [256] = "#CDD6F4", // foreground
-    [257] = "#1E1E2E", // background
-    [258] = "#F5E0DC", // cursor
+    [255] = 0,
 
+    /* more colors can be added after 255 to use with DefaultXX */
+    "#cccccc",
+    "#555555",
+    "gray90", /* default foreground colour */
+    "black",  /* default background colour */
 };
-
-unsigned int defaultfg = 256;
-unsigned int defaultbg = 257;
-unsigned int defaultcs = 258;
-static unsigned int defaultrcs = 258;
 
 /*
-static const char *colorname[] = {
-    [0] = "#282828",  [1] = "#cc241d",  [2] = "#98971a",  [3] = "#d79921",
-    [4] = "#458588",  [5] = "#b16286",  [6] = "#689d6a",  [7] = "#a89984",
-
-    [8] = "#928374",  [9] = "#fb4934",  [10] = "#b8bb26", [11] = "#fabd2f",
-    [12] = "#83a598", [13] = "#d3869b", [14] = "#8ec07c", [15] = "#ebdbb2",
-};
-
-unsigned int defaultfg = 15;
-unsigned int defaultbg = 0;
-unsigned int defaultcs = 15;
+ * Default colors (colorname index)
+ * foreground, background, cursor, reverse cursor
+ */
+unsigned int defaultfg = 258;
+unsigned int defaultbg = 259;
+unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 257;
-*/
 
 /*
  * Default shape of cursor
@@ -517,9 +508,9 @@ static const XResPref resources[] = {
     {"st.color13", STRING, &colorname[13]},
     {"st.color14", STRING, &colorname[14]},
     {"st.color15", STRING, &colorname[15]},
-    {"st.foreground", STRING, &colorname[256]},
-    {"st.background", STRING, &colorname[257]},
-    {"st.cursorColor", STRING, &colorname[258]},
+    {"st.foreground", STRING, &colorname[258]},
+    {"st.background", STRING, &colorname[259]},
+    {"st.cursorColor", STRING, &colorname[256]},
     {"st.cursorColorReverse", STRING, &colorname[257]},
     {"st.termname", STRING, &termname},
     {"st.shell", STRING, &shell},
